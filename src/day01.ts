@@ -1,18 +1,19 @@
 namespace day01 {
     var appIn : HTMLTextAreaElement;
     var appOut : HTMLTextAreaElement;
-    export function init () {
+    export function init (phase: number) {
         // Get our elements of interest
         appIn = document.getElementById("appIn") as HTMLTextAreaElement;
         appOut = document.getElementById("appOut") as HTMLTextAreaElement;
+        return run;
     }
 
-    export function run (calculation?: number) {
+    function run (mode: number) {
         var inNumbers: number[];
         // Read each line as an integer and create an array
         inNumbers = appIn.value.split('\n').map(x => parseInt(x));
         var out: number = 0;
-        switch (calculation) {
+        switch (mode) {
             case 1: // Compare current with previous
                 out = inNumbers.reduce((accumulator, x, i, all):number => {
                     if (i > 0) {

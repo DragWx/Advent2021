@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="common.css">
+    <script src="out/main.js"></script>
+</head>
+<body onload="globalInit()">
+    <div id="header">
+        <span class="title fill"><span class="festive-1">Advent</span> <span class="festive-2">2021</span></span>
+        <span class="controls space waitForLoaded">
+            <select id="daySelect">
+                <option class="festive-1" value="1">Day 1</option>
+                <option class="festive-2" value="2">Day 2</option>
+                <option class="festive-3" value="3">Day 3</option>
+                <option class="festive-4" value="4">Day 4</option>
+                <option class="festive-5" value="5">Day 5</option>
+                <option class="festive-1" value="6">Day 6</option>
+                <option class="festive-2" value="7">Day 7</option>
+                <option class="festive-3" value="8">Day 8</option>
+                <option class="festive-4" value="9">Day 9</option>
+                <option class="festive-5" value="10">Day 10</option>
+                <option class="festive-1" value="11">Day 11</option>
+                <option class="festive-2" value="12">Day 12</option>
+                <option class="festive-3" value="13">Day 13</option>
+                <option class="festive-4" value="14">Day 14</option>
+                <option class="festive-5" value="15">Day 15</option>
+                <option class="festive-1" value="16">Day 16</option>
+                <option class="festive-2" value="17">Day 17</option>
+                <option class="festive-3" value="18">Day 18</option>
+                <option class="festive-4" value="19">Day 19</option>
+                <option class="festive-5" value="20">Day 20</option>
+                <option class="festive-1" value="21">Day 21</option>
+                <option class="festive-2" value="22">Day 22</option>
+                <option class="festive-3" value="23">Day 23</option>
+                <option class="festive-4" value="24">Day 24</option>
+                <option class="festive-5" value="25">Day 25</option>
+            </select>
+            <select id="phaseSelect">
+                <option class="festive-2" value="1">Phase I</option>
+                <option class="festive-5" value="2">Phase II</option>
+            </select>
+        </span>
+    </div>
+    <div class="cols space fill waitForLoaded" id="main">
+        <div class="rows fill">
+            <div class="bar">
+                <span class="festive-3">Input</span>
+                <span class="fill"></span>
+                <span class="buttons space">
+                    <button class="festive-4" onClick="clearButton('input')">Clear</button>
+                    <button class="festive-5" id="runButton" onClick="runButton()">Run &gt;&gt;</button>
+                </span>
+            </div>
+            <textarea class="fill space festive-1" id="appIn"></textarea>
+        </div>
+        <div class="rows fill">
+            <div class="bar">
+                <span class="festive-1 bar">Output</span>
+                <span class="fill"></span>
+                <span class="buttons space">
+                    <button class="festive-2" onClick="clearButton('output')">Clear</button>
+                </span>
+            </div>
+            <textarea class="fill space festive-3" id="appOut"></textarea>
+        </div>
+    </div>
+    <div id="footer">
+        <span class="fill"></span>
+        <span class="title">
+            <span class="festive-1">h a p p y</span> -
+            <span class="festive-2">m e r r y</span> -
+            <span class="festive-3">f e s t i v e</span> -
+            <span class="festive-4">s n o w y</span> -
+            <span class="festive-5">b i n k l e</span>
+        </span>
+    </div>
+</body>
+</html>

@@ -11,7 +11,9 @@
     --festive-4-bg-color: #238;
     --festive-5-bg-color: #152;
 }
-
+.waitForLoaded {
+    visibility: hidden;
+}
 body {
     box-sizing: border-box;
     font-family: sans-serif;
@@ -24,6 +26,9 @@ body {
     width: 100vw;
     height: 100vh;
 }
+textarea {
+    resize: none;
+}
 input, textarea {
     background: #123;
     border: 2px inset #123;
@@ -33,17 +38,25 @@ input:focus, textarea:focus {
     outline: none;
     border-color: #246;
 }
-.header, .footer {
+#header, #footer {
     display: flex;
     flex-direction: row;
     font-size: 18pt;
     margin: 8px;
 }
-.footer {
+#footer {
     color: #668;
 }
-.header .title {
+#header .title {
     font-weight: bold;
+}
+#header .controls {
+    display: flex;
+    align-items: stretch;
+}
+#header .controls select {
+    height: 100%;
+    min-width: 8em;
 }
 .festive-1 {
     color: var(--festive-1-color);
@@ -60,59 +73,77 @@ input:focus, textarea:focus {
 .festive-5 {
     color: var(--festive-5-color);
 }
-.footer .festive-1 {
+#footer .festive-1 {
     color: var(--festive-1-bg-color);
 }
-.footer .festive-2 {
+#footer .festive-2 {
     color: var(--festive-2-bg-color);
 }
-.footer .festive-3 {
+#footer .festive-3 {
     color: var(--festive-3-bg-color);
 }
-.footer .festive-4 {
+#footer .festive-4 {
     color: var(--festive-4-bg-color);
 }
-.footer .festive-5 {
+#footer .festive-5 {
     color: var(--festive-5-bg-color);
 }
-button {
+button, select {
     height: 2rem;
     cursor: pointer;
     border-radius: 4px;
     background: #446;
     border-color: #446;
     color: #FFF;
+}
+button {
     text-transform: uppercase;
 }
-button.festive-1 {
+button.festive-1,
+option.festive-1,
+select.festive-1 {
     background: var(--festive-1-bg-color);
     border-color: var(--festive-1-color);
     color: #FFF;
 }
-button.festive-2 {
+button.festive-2,
+option.festive-2,
+select.festive-2 {
     background: var(--festive-2-bg-color);
     border-color: var(--festive-2-color);
     color: #FFF;
 }
-button.festive-3 {
+button.festive-3,
+option.festive-3,
+select.festive-3 {
     background: var(--festive-3-bg-color);
     border-color: var(--festive-3-color);
     color: #FFF;
 }
-button.festive-4 {
+button.festive-4,
+option.festive-4,
+select.festive-4 {
     background: var(--festive-4-bg-color);
     border-color: var(--festive-4-color);
     color: #FFF;
 }
-button.festive-5 {
+button.festive-5,
+option.festive-5,
+select.festive-5 {
     background: var(--festive-5-bg-color);
     border-color: var(--festive-5-color);
     color: #FFF;
 }
-button:hover {
+button:hover:not(:disabled), select:hover:not(:disabled) {
     border-color: #FFF;
 }
-
+button:disabled,
+option:disabled {
+    background: #223;
+    border-color: #223;
+    color: #889;
+    cursor: not-allowed;
+}
 
 /* Layout-ish stuff */
 
