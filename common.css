@@ -1,0 +1,139 @@
+/* Incredibly festive colors */
+:root {
+    --festive-1-color: #FA2;
+    --festive-2-color: #F46;
+    --festive-3-color: #F5B;
+    --festive-4-color: #47F;
+    --festive-5-color: #1B4;
+    --festive-1-bg-color: #851;
+    --festive-2-bg-color: #823;
+    --festive-3-bg-color: #836;
+    --festive-4-bg-color: #238;
+    --festive-5-bg-color: #152;
+}
+
+body {
+    box-sizing: border-box;
+    font-family: sans-serif;
+    background: #012;
+    color: #CCD;
+    display: flex;
+    flex-direction: column;
+    margin: 0;
+    padding: 0;
+    width: 100vw;
+    height: 100vh;
+}
+input, textarea {
+    background: #123;
+    border: 2px inset #123;
+    color: #AEC;
+}
+input:focus, textarea:focus {
+    outline: none;
+    border-color: #246;
+}
+.header, .footer {
+    display: flex;
+    flex-direction: row;
+    font-size: 18pt;
+    margin: 8px;
+}
+.footer {
+    color: #668;
+}
+.header .title {
+    font-weight: bold;
+}
+.festive-1 {
+    color: var(--festive-1-color);
+}
+.festive-2 {
+    color: var(--festive-2-color);
+}
+.festive-3 {
+    color: var(--festive-3-color);
+}
+.festive-4 {
+    color: var(--festive-4-color);
+}
+.festive-5 {
+    color: var(--festive-5-color);
+}
+.footer .festive-1 {
+    color: var(--festive-1-bg-color);
+}
+.footer .festive-2 {
+    color: var(--festive-2-bg-color);
+}
+.footer .festive-3 {
+    color: var(--festive-3-bg-color);
+}
+.footer .festive-4 {
+    color: var(--festive-4-bg-color);
+}
+.footer .festive-5 {
+    color: var(--festive-5-bg-color);
+}
+button {
+    height: 2rem;
+    cursor: pointer;
+    border-radius: 4px;
+    background: #446;
+    border-color: #446;
+    color: #FFF;
+    text-transform: uppercase;
+}
+button.festive-1 {
+    background: var(--festive-1-bg-color);
+    border-color: var(--festive-1-color);
+    color: #FFF;
+}
+button.festive-2 {
+    background: var(--festive-2-bg-color);
+    border-color: var(--festive-2-color);
+    color: #FFF;
+}
+button.festive-3 {
+    background: var(--festive-3-bg-color);
+    border-color: var(--festive-3-color);
+    color: #FFF;
+}
+button.festive-4 {
+    background: var(--festive-4-bg-color);
+    border-color: var(--festive-4-color);
+    color: #FFF;
+}
+button.festive-5 {
+    background: var(--festive-5-bg-color);
+    border-color: var(--festive-5-color);
+    color: #FFF;
+}
+button:hover {
+    border-color: #FFF;
+}
+
+
+/* Layout-ish stuff */
+
+.rows {
+    display: flex;
+    flex-direction: column;
+}
+.cols {
+    display: flex;
+    flex-direction: row;
+}
+.fill {
+    flex: 1 1 0;
+}
+.space {
+    gap: 8px;
+}
+
+.bar {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 2rem;
+}
