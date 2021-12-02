@@ -2,9 +2,9 @@
 <html>
 <head>
     <link rel="stylesheet" href="common.css">
-    <script src="out/day01.js"></script>
+    <script src="out/main.js"></script>
 </head>
-<body>
+<body onload="day01.init()">
     <div class="header">
         <span class="title"><span class="festive-1">Day</span> <span class="festive-2">1</span></span>
     </div>
@@ -13,8 +13,8 @@
             <div class="bar">
                 <span class="festive-3">Input</span>
                 <span class="fill"></span>
-                <span class="buttons"><button class="festive-4" onClick="run(1)">Run 1</button></span>
-                <span class="buttons"><button class="festive-2" onClick="run(2)">Run 2</button></span>
+                <span class="buttons"><button class="festive-4" onClick="day01.run(1)">Run 1</button></span>
+                <span class="buttons"><button class="festive-2" onClick="day01.run(2)">Run 2</button></span>
             </div>
             <textarea class="fill space festive-1" id="appIn"></textarea>
         </div>

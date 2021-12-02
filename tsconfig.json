@@ -1,8 +1,10 @@
 {
     "compilerOptions": {
-        "module": "amd",
+        "module": "None",
         "target": "es6",
-        "outDir": "out"
+        "outDir": "out",
+        "outFile": "out/main.js",
+        "rootDir": "src"
     },
     "include": [
         "src"
