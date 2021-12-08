@@ -105,7 +105,6 @@ namespace day08 {
                     });
                     // 2 AND !3 gets us 'E'
                     segBit[4] = digitMask[2] & (digitMask[3] ^ inverseMask);
-                    debugger;
                     // Using just 'E', we can figure out where 6 and 9 are. (nice)
                     var codesToCheck = [6, 7, 8];
                     var indexOf6 = codesToCheck.find(i => codeMask[i] == (digitMask[5] | segBit[4]));
