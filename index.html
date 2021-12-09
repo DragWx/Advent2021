@@ -54,15 +54,30 @@
             </div>
             <textarea class="fill space festive-1" id="appIn"></textarea>
         </div>
-        <div class="rows fill">
-            <div class="bar">
-                <span class="festive-1 bar">Output</span>
-                <span class="fill"></span>
-                <span class="buttons space">
-                    <button class="festive-2" onClick="clearButton('output')">Clear</button>
-                </span>
+        <div class="rows fill space">
+            <div class="rows fill">
+                <div class="bar">
+                    <span class="festive-1 bar">Output</span>
+                    <span class="fill"></span>
+                    <span class="buttons space">
+                        <button class="festive-2" onClick="clearButton('output')">Clear</button>
+                    </span>
+                </div>
+                <textarea class="fill space festive-3" id="appOut"></textarea>
             </div>
-            <textarea class="fill space festive-3" id="appOut"></textarea>
+            <div class="rows fill-big hide" id="outputExtraPane">
+                <div class="bar">
+                    <span class="festive-2 bar">Extra View</span>
+                    <span class="fill"></span>
+                    <span class="buttons space">
+                        <label class="button festive-1">
+                            <input type="checkbox" id="outputExtraToggle">
+                            <div>Show</div>
+                        </label>
+                    </span>
+                </div>
+                <div class="cols fill" id="outputExtra"></div>
+            </div>
         </div>
     </div>
     <div id="footer">

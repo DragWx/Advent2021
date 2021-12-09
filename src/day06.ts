@@ -1,10 +1,14 @@
 namespace day06 {
     var appIn : HTMLTextAreaElement;
     var appOut : HTMLTextAreaElement;
-    export function init (phase: number) {
+    export const config: object = {
+        phases: 2,
+        extras: []
+    };
+    export function init (phase: number, inElement: HTMLTextAreaElement, outElement: HTMLTextAreaElement, extras: object) {
         // Get our elements of interest
-        appIn = document.getElementById("appIn") as HTMLTextAreaElement;
-        appOut = document.getElementById("appOut") as HTMLTextAreaElement;
+        appIn = inElement;
+        appOut = outElement;
         return run;
     }
 

@@ -7,19 +7,34 @@ var currDayPhase = {
 var page: {
     daySelect: HTMLSelectElement,
     phaseSelect: HTMLSelectElement,
+    outputExtraToggle: HTMLInputElement,
+    outputExtraPane: HTMLDivElement,
+    outputExtra: HTMLDivElement,
     appIn: HTMLTextAreaElement,
-    appOut: HTMLTextAreaElement
+    appOut: HTMLTextAreaElement,
+    extras: {
+        outCanvas?: HTMLCanvasElement
+    }
 };
-// Fill with the namespace for each day.
-var days = [
-    day01, day02, day03, day04, day05, day06, day07, day08, day09
-];
+// The namespace for each day.
+var days = [];
 function globalInit() {
+    // Dynamically find all namespaces whose names are day01, day02, ..., day25.
+    var dayNames = Array<string>(25);
+    for (var i = 1; i < 26; i++) {
+        dayNames[i-1] = `day${i < 10 ? '0' + i : i}`;
+    }
+    dayNames = dayNames.filter(x => typeof window[x] !== 'undefined');
+    days = dayNames.map(x => window[x]);
     page = {
         daySelect: document.getElementById("daySelect") as HTMLSelectElement,
         phaseSelect: document.getElementById("phaseSelect") as HTMLSelectElement,
+        outputExtraToggle: document.getElementById("outputExtraToggle") as HTMLInputElement,
+        outputExtraPane: document.getElementById("outputExtraPane") as HTMLDivElement,
+        outputExtra: document.getElementById("outputExtra") as HTMLDivElement,
         appIn: document.getElementById("appIn") as HTMLTextAreaElement,
-        appOut: document.getElementById("appOut") as HTMLTextAreaElement
+        appOut: document.getElementById("appOut") as HTMLTextAreaElement,
+        extras: {}
     };
     // We take advantage of the fact that browsers typically save the value of
     // all inputs between refreshes.
@@ -50,6 +65,19 @@ function globalInit() {
     }
     dayPhaseBind(page.daySelect, currDayPhase, "day");
     dayPhaseBind(page.phaseSelect, currDayPhase, "phase");
+
+    var outputExtraToggleHandler = function(this: HTMLInputElement, ev: Event) {
+        if (this.checked) {
+            page.outputExtra.classList.remove("hide");
+            page.outputExtraPane.classList.add("fill-big");
+        } else {
+            page.outputExtra.classList.add("hide");
+            page.outputExtraPane.classList.remove("fill-big");
+        }
+
+    }
+    page.outputExtraToggle.addEventListener("change", outputExtraToggleHandler);
+    page.outputExtraToggle.dispatchEvent(new Event("change"));
 
     // Once everything's gone without a hitch, check for ".waitForLoaded" and
     // and remove from all elements.
@@ -91,14 +119,34 @@ function loadDayPhase() {
     if (!currDayPhase.day || !currDayPhase.phase) {
         return;
     }
+    // Get the current day's namespace.
+    currDayPhase.namespace = days[currDayPhase.day-1];
+
+    // Clear extras
+    while (page.outputExtra.firstChild) {
+        page.outputExtra.removeChild(page.outputExtra.firstChild);
+    }
+    for (var element in page.extras) {
+        delete page.extras[element];
+    }
+    // Parse any extras configured by the day.
+    if (currDayPhase.namespace.config['extras']) {
+        if (currDayPhase.namespace.config['extras'].indexOf('outCanvas') != -1) {
+            page.extras.outCanvas = document.createElement("canvas");
+            page.extras.outCanvas.classList.add("fill");
+            page.outputExtra.appendChild(page.extras.outCanvas);
+            page.outputExtraPane.classList.remove("hide");
+        } else {
+            page.outputExtraPane.classList.add("hide");
+        }
+    }
     // Start by disabling the [run] button. It'll stay disabled if there's
     // an error loading the selected day.
     var runButton = document.getElementById("runButton") as HTMLButtonElement;
     runButton.disabled = true;
     try {
-        // Get the current day's namespace and run the init function.
-        currDayPhase.namespace = days[currDayPhase.day-1];
-        run = currDayPhase.namespace.init(currDayPhase.phase);
+        // Run the day's init function.
+        run = currDayPhase.namespace.init(currDayPhase.phase, page.appIn, page.appOut, page.extras);
         // If the above failed, we won't reach this point and the [run] button
         // stays disabled.
         runButton.disabled = false;

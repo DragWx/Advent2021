@@ -1,10 +1,17 @@
 namespace day09 {
     var appIn : HTMLTextAreaElement;
     var appOut : HTMLTextAreaElement;
-    export function init (phase: number) {
+    var outCanvas : HTMLCanvasElement;
+    export const config: object = {
+        phases: 2,
+        extras: ['outCanvas']
+    };
+    export function init (phase: number, inElement: HTMLTextAreaElement, outElement: HTMLTextAreaElement, extras: object) {
         // Get our elements of interest
-        appIn = document.getElementById("appIn") as HTMLTextAreaElement;
-        appOut = document.getElementById("appOut") as HTMLTextAreaElement;
+        appIn = inElement;
+        appOut = outElement;
+        outCanvas = extras["outCanvas"];
+        outCanvas.style.imageRendering = "crisp-edges";
         return run;
     }
 
@@ -82,6 +89,89 @@ namespace day09 {
                 basins.slice(-3).forEach(x => output *= x.length);
                 appOut.value += `Output: ${output}`;
                 break;
+        }
+
+        if (outCanvas) {
+            var getColorFromHex = function (colorHex: string) {
+                // Convert from #RRGGBB... to decimal values [R, G, B, ...]
+                var channels = [];
+                for (var i = 0; i < 4; i++) {
+                    if ((i * 2) >= colorHex.length - 1) { break; }
+                    channels.push(parseInt(colorHex.substr(1 + (i * 2),2), 16) / 255);
+                }
+                return channels;
+            }
+            
+            var getHexFromColor = function (color: Array<number>) {
+                // Convert from [R, G, B, ...] to hex #RRGGBB...
+                var out = "#";
+                color.forEach(currChn => {
+                    if (currChn > 1) {
+                        currChn = 1;
+                    } else if (currChn < 0) {
+                        currChn = 0;
+                    }
+                    var currHex = Math.floor(currChn * 255).toString(16);
+                    out += (currHex.length < 2 ? "0" : "") + currHex;
+                });
+                return out;
+            }
+            
+            var combineColors = function (color: string, target: string) {
+                // Blend color to target
+                var channels = getColorFromHex(color);
+                var tgtChannels = getColorFromHex(target);
+                for (var i = 0; i < 3; i++) {
+                    channels[i] = (channels[i] * (tgtChannels[i] * 2));
+                }
+                return getHexFromColor(channels);
+            }
+            var cxt = outCanvas.getContext("2d");
+            outCanvas.height = heightMap.length;
+            outCanvas.width = heightMap[0].length;
+            const palette = [
+                "#000000",
+                "#111111",
+                "#222222",
+                "#333333",
+                "#444444",
+                "#555555",
+                "#666666",
+                "#888888",
+                "#AAAAAA",
+                "#DDDDDD"
+            ]
+            const hues = [
+                "#AA2222",
+                "#AA8833",
+                "#118822",
+                "#2288AA",
+                "#4444AA",
+                "#BB11DD"
+            ]
+            switch (mode) {
+                case 1:
+                    heightMap.forEach((currRow, y) => {
+                        currRow.forEach((currCol, x) => {
+                            cxt.fillStyle = palette[currCol];
+                            cxt.fillRect(x, y, 1, 1);
+                        });
+                    });
+                    cxt.fillStyle = "#F00";
+                    lowCandidates.forEach(point => {
+                        cxt.fillRect(point.x, point.y, 1, 1);
+                    });
+                    break;
+                case 2:
+                    basins.forEach((basin, i) => {
+                        var currColor = Math.floor(Math.random() * hues.length);
+                        basin.forEach(point => {
+                            cxt.fillStyle = combineColors(palette[heightMap[point.y][point.x]], hues[currColor]);
+                            cxt.fillRect(point.x, point.y, 1, 1);
+                        });
+                    });
+                    break;
+            }
         }
     }
     function checkCell(topRow: Array<number>, middleRow: Array<number>, bottomRow: Array<number>, x: number) {
