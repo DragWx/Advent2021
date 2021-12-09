@@ -55,12 +55,34 @@ namespace day09 {
                 lowCandidates.push({x: i, y: heightMap.length - 1, height: checkRow[i]});
             }
         }
-        var output = 0
-        lowCandidates.forEach(x => {
-            output += x.height + 1;
-            //appOut.value += `${x.x}, ${x.y}: ${x.height}\n`;
-        });
-        appOut.value += `Output: ${output}\n`;
+
+        switch (mode) {
+            case 1:
+                // If phase 1, we're done.
+                var output = 0
+                lowCandidates.forEach(x => {
+                    output += x.height + 1;
+                    //appOut.value += `${x.x}, ${x.y}: ${x.height}\n`;
+                });
+                appOut.value += `Output: ${output}\n`;
+                break;
+            case 2:
+                var basins = Array<Array<{x: number, y: number}>>();
+                // Now use the floodfill algorithm on all of the low points.
+                // I'm trusting that each low point is bounded by 9's such that
+                // exactly one low point exists in each bounded region.
+                lowCandidates.forEach(x => {
+                    basins.push(floodFill(heightMap, x.x, x.y));
+                });
+                /*basins.forEach(x => {
+                    appOut.value += `${x[0].x}, ${x[0].y}: ${x.length}\n`;
+                })*/
+                basins.sort((a, b) => a.length - b.length);
+                var output = 1;
+                basins.slice(-3).forEach(x => output *= x.length);
+                appOut.value += `Output: ${output}`;
+                break;
+        }
     }
     function checkCell(topRow: Array<number>, middleRow: Array<number>, bottomRow: Array<number>, x: number) {
         if (((!bottomRow)                || (middleRow[x] < bottomRow[x]))   // Bottom neighbor
@@ -70,5 +92,27 @@ namespace day09 {
             return true;
         }
         return false;
+    }
+    function floodFill(map: Array<Array<number>>, x: number, y: number) {
+        const queue = new Array<{x: number, y: number}>();
+        const result = new Array<{x: number, y: number}>();
+        const test = function(x: number, y: number) {
+            if ((map[currCell.y][currCell.x] != 9) && (result.find(cell => (cell.x == x) && (cell.y == y)) === undefined)) {
+                return true;
+            }
+            return false;
+        }
+        queue.push({x: x, y: y});
+        while (queue.length > 0) {
+            var currCell = queue.pop();
+            if (test(currCell.x, currCell.y)) {
+                result.push({x: currCell.x, y: currCell.y});
+                if (currCell.x > 0)                          { queue.push({x: currCell.x - 1, y: currCell.y}) };
+                if (currCell.x < map[currCell.y].length - 1) { queue.push({x: currCell.x + 1, y: currCell.y}) };
+                if (currCell.y > 0)                          { queue.push({x: currCell.x, y: currCell.y - 1}) };
+                if (currCell.y < map.length - 1)             { queue.push({x: currCell.x, y: currCell.y + 1}) };
+            }
+        }
+        return result;
     }
 };
