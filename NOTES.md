@@ -69,3 +69,8 @@ My difficulty here was, I kept thinking of XOR by default, even when what I *act
 - Congratulations, you've decoded all digits!
 
 This was fun to puzzle out.
+
+# Day 9
+I started out with something like how GIF dithering works, where the cells are checked as they're scanned in, where you only have the cells to the left, and the cells on the upper rows available (and then I was going to scan through the results and finish checking the right and bottom neighbors of each). However, the logic was much simpler if the *previous* line is checked as the current line is scanned in, with the current cell being the bottom neighbor (and then don't forget to scan the last line when the scan-in is complete).
+Phase 2 was just a matter of adding the floodfill algorithm on the results of phase 1, while trusting that the puzzle input would exactly match the puzzle's description of the input without any faults. :D (That is, each region is bounded by `9`s and there's exactly one low point per region)
+Surprisingly straightforward, no issues, no difficulties, I didn't get mixed up, it's nice to have a day like that, huh?
