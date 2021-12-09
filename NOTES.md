@@ -1,5 +1,6 @@
+This file assumes you're already familiar with [each day's puzzle](https://adventofcode.com/2021).
 # General
-I chose TypeScript because I wanted to use a language that didn't require much configuration and boilerplate code to get running, since <irony>I didn't want to dump a lot of time into something that was supposed to be a quick daily challenge</irony>. Added bonus: I get an HTML/CSS frontend for free. I also briefly considered C++.
+I chose TypeScript because I wanted to use a language that didn't require much configuration and boilerplate code to get running, since `<irony>`I didn't want to dump a lot of time into something that was supposed to be a quick daily challenge`</irony>`. Added bonus: I get an HTML/CSS frontend for free. I also briefly considered C++.
 
 # Day 1, 2
 I spent most of my time setting up my dev environment, figuring out the project structure, and working on an extremely festive and pretty and not at all garish UI. There were plans to allow the input/output change layouts depending on what the day's puzzle required, but after a few days, it seemed like it wouldn't be necessary, the puzzles seem constrained to "here's your input, I just want a number as the output".
@@ -30,6 +31,7 @@ And finally, phase 2 passed. I was up until 4am the night-of, and then all the n
 
 # Day 6
 I interpreted the puzzle too literally by writing a class to represent the lanternfish. At 80 iterations, it was fine, but when phase two asked for 256 iterations, haha that won't scale at all! :D
+
 The laternfish have no properties aside from their timer value, so they can be represented by a queue instead. The problem was, I initialized the queue to 8 spaces. I needed 9. Because 0 to 8 is 9 spaces. :D That was much easier to fix than the previous day!
 
 # Day 7
@@ -68,9 +70,13 @@ My difficulty here was, I kept thinking of XOR by default, even when what I *act
    - The last remaining unknown is therefore `0`, by process of elimination.
 - Congratulations, you've decoded all digits!
 
-This was fun to puzzle out.
+This was fun to puzzle out, even though I now know there are more efficient solutions.
 
 # Day 9
-I started out with something like how GIF dithering works, where the cells are checked as they're scanned in, where you only have the cells to the left, and the cells on the upper rows available (and then I was going to scan through the results and finish checking the right and bottom neighbors of each). However, the logic was much simpler if the *previous* line is checked as the current line is scanned in, with the current cell being the bottom neighbor (and then don't forget to scan the last line when the scan-in is complete).
+I started out with something like how GIF dithering works, where the cells are checked as they're scanned in, where you only have the cells to the left, and the cells on the upper rows available (and then I was going to scan through the results and finish checking the right and bottom neighbors of each).
+
+However, the logic was much simpler if the *previous* line is checked as the current line is scanned in, with the current cell being the bottom neighbor (and then don't forget to scan the last line when the scan-in is complete).
+
 Phase 2 was just a matter of adding the floodfill algorithm on the results of phase 1, while trusting that the puzzle input would exactly match the puzzle's description of the input without any faults. :D (That is, each region is bounded by `9`s and there's exactly one low point per region)
+
 Surprisingly straightforward, no issues, no difficulties, I didn't get mixed up, it's nice to have a day like that, huh?
