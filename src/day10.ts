@@ -25,8 +25,15 @@ namespace day10 {
             [']', 57],
             ['}', 1197],
             ['>', 25137]
-        ])
+        ]);
+        const closeBracketScores2: Map<string, number> = new Map([
+            [')', 1],
+            [']', 2],
+            ['}', 3],
+            ['>', 4]
+        ]);
         var score = 0;
+        var p2Scores = new Array<number>();
         appIn.value.split("\n").forEach((inTxtRaw) => {
             if (!inTxtRaw || !inTxtRaw.trim()) {
                 // If string is null, empty, or whitespace.
@@ -52,13 +59,21 @@ namespace day10 {
                     }
                 }
             }
+            // We've parsed the whole line.
+            var p2Score = 0;
+            while (bracketStack.length > 0) {
+                p2Score *= 5;
+                p2Score += closeBracketScores2.get(bracketStack.pop());
+            }
+            p2Scores.push(p2Score);
         });
         switch (mode) {
             case 1:
                 appOut.value += `Output: ${score}\n`;
                 break;
             case 2:
-                appOut.value += `This is phase 2's output.\n`;
+                p2Scores = p2Scores.sort((a, b) => a - b);
+                appOut.value += `Output: ${p2Scores[(p2Scores.length - 1) / 2]}\n`;
                 break;
         }
     }
