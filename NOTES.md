@@ -80,3 +80,22 @@ However, the logic was much simpler if the *previous* line is checked as the cur
 Phase 2 was just a matter of adding the floodfill algorithm on the results of phase 1, while trusting that the puzzle input would exactly match the puzzle's description of the input without any faults. :D (That is, each region is bounded by `9`s and there's exactly one low point per region)
 
 Surprisingly straightforward, no issues, no difficulties, I didn't get mixed up, it's nice to have a day like that, huh?
+
+# Day 10
+To match brackets, you need to keep track of which opening brackets you've encountered, and in what order. A `stack` is convenient for this.
+
+For now, just assume each opening bracket has one unique closing bracket, but with the side note that in reality, [some languages are more complicated](https://github.com/microsoft/vscode/pull/132504). :P
+
+When you encounter an opening bracket, push the corresponding closing bracket on the stack.
+
+When you encounter a closing bracket, pop the stack and check, does your current character match what you popped off the stack?
+- If it does, you're good! Keep parsing.
+- If it's *different*, then you've just found a mismatched closing bracket.
+
+If you successfully parse the entire line and don't find any mismatched brackets, your `stack` will conveniently contain all of the closing brackets required to complete the line, and in the correct order!
+
+I really like how phase 2 is scored: For each remaining bracket:
+1. Multiply the running score by 5.
+2. Add 1, 2, 3, or 4 to the score, depending on which bracket it is.
+
+This is very similar to bit shifting, except instead of bits, you're dealing with values which are between \[0..4\], all stored in a single number. If you multiply by 2 and only have values between 0 and 1, *then* you have bit shifting, but what happens [if you don't limit yourself to integers?](https://en.wikipedia.org/wiki/Arithmetic_coding)
