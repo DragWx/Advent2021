@@ -14,6 +14,7 @@ namespace day11 {
 
     function run (mode: number) {
         var grid = Array<Array<number>>();
+        var octopusCount = 0;
         var hasFlashed = Array<{x: number, y: number}>();
         var wasFlashedOn = Array<{x: number, y: number}>();
         var flashCount = 0;
@@ -28,6 +29,7 @@ namespace day11 {
             var newRow = Array<number>();
             for (var i = 0; i < inTxt.length; i++) {
                 newRow.push(parseInt(inTxt.charAt(i)));
+                octopusCount++;
             }
             grid.push(newRow);
         });
@@ -54,7 +56,7 @@ namespace day11 {
             return value + 1;
         }
 
-        for (var i = 0; i < 100; i++) {
+        var runGrid = function() {
             // First, clock every octopus.
             grid.forEach((currRow, y) => {
                 currRow.forEach((currCell, x) => {
@@ -70,20 +72,34 @@ namespace day11 {
 
             // Once everyone's done flashing, count how many flashed and reset them
             // all back to 0.
-            flashCount += hasFlashed.length;
+            var currFlashCount = hasFlashed.length;
             hasFlashed.forEach(octo => { grid[octo.y][octo.x] = 0; });
             hasFlashed.length = 0;
+
+            return currFlashCount;
         }
 
         switch (mode) {
             case 1:
+                // Run 100 steps.
+                for (var i = 0; i < 100; i++) {
+                    flashCount += runGrid();
+                }
                 grid.forEach(currRow => {
                     appOut.value += `${currRow.join('')}\n`;
                 })
                 appOut.value += `Output: ${flashCount}\n`;
                 break;
             case 2:
-                appOut.value += `This is phase 2's output.\n`;
+                // Run until all octopuses flash at once.
+                var i = 0;
+                while (true) {
+                    i++;
+                    if (runGrid() == octopusCount) {
+                        break;
+                    }
+                }
+                appOut.value += `Output: ${i}\n`;
                 break;
         }
     }
