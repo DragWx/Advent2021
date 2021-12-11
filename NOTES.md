@@ -99,3 +99,10 @@ I really like how phase 2 is scored: For each remaining bracket:
 2. Add 1, 2, 3, or 4 to the score, depending on which bracket it is.
 
 This is very similar to bit shifting, except instead of bits, you're dealing with values which are between \[0..4\], all stored in a single number. If you multiply by 2 and only have values between 0 and 1, *then* you have bit shifting, but what happens [if you don't limit yourself to integers?](https://en.wikipedia.org/wiki/Arithmetic_coding)
+
+# Day 11
+Another puzzle where it's helpful to use a `stack`! Iterate over your grid of octopuses, and when one flashes, mark it as `flashed` and add all 8 neighboring octopuses (if they exist) to a stack. Once you're finished looking at the whole grid, keep popping octopuses off of your stack (and iterating on them) until the stack finally becomes empty. Count how many are marked as `flashed`, reset those to `0`, and you're done with one step.
+
+Part 2 is as straightforward as running until every single octopus in the grid is marked `flashed` at the end of the step.
+
+You know, repeatedly popping a self-refilling stack until it's empty is a lot like the `floodfill` algorithm I used in puzzle 9-2. This is the third day in a row requiring stacks, I wonder how much more complicated things will get? Especially when day 5 was the one that was *my* most complicated one. :P
