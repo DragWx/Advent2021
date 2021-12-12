@@ -121,4 +121,6 @@ An immutable snapshot of the current "state" is passed to each recursive call:
 
 Because each call contains its own snapshot of the state, we get the "rewinding" property we want when the DFS backtracks to traverse the next branch.
 
+For this one, it actually took me an hour just to come up with a way to solve the puzzle at all, but once I figured it out, it was 30 minutes of code-writing to implement, and then another 30 minutes for phase 2. This was the first one I needed to write on a notepad to figure out. :P
+
 My solution for phase 2 is, so far, the only one that noticably takes a second or two to complete. All of my other solutions so far are instant on my machine. I wonder if there's a way to improve this?
