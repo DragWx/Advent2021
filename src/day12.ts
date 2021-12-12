@@ -43,31 +43,42 @@ namespace day12 {
 
         var validPaths = new Array<Array<string>>();
         // I don't usually like recursive functions but I can't think of a less complicated way.
-        var checkCave = function (caveName: string, currPath: Array<string>) {
+        var checkCave = function (caveName: string, currPath: Array<string>, revisitSmallAllowed: boolean) {
             if (caveName == "end") {
                 // If I'm the `end` cave, success! Add currPath to the list and terminate this route.
                 validPaths.push([...currPath, caveName]);
                 return true;
             }
 
-            // Check all my edges which are big, or are small and not in the path already.
-            var toCheck = caves.get(caveName).filter(x => (currPath.indexOf(x) == -1) || (x == x.toUpperCase()));
+            var toCheck: Array<string>;
+            // Where we're allowed to go from here depends on `revisitSmallAllowed`.
+            if (revisitSmallAllowed) {
+                // We can go anywhere from here, except back to `start`.
+                toCheck = caves.get(caveName).filter(x => x != "start");
+            } else {
+                // From here, we can always go to any big cave, but we can only go to small caves not already visited.
+                toCheck = caves.get(caveName).filter(x => (currPath.indexOf(x) == -1) || (x == x.toUpperCase()));
+            }
 
-            toCheck.forEach(cave => { checkCave(cave, [...currPath, caveName]); });
+            // If `revisitSmallAllowed` was true, and we're about to visit a small cave already in the path,
+            // we are no longer allowed to revisit any small caves after that.
+            toCheck.forEach(cave => { checkCave(cave, [...currPath, caveName], revisitSmallAllowed && ((cave == cave.toUpperCase()) || (currPath.indexOf(cave) == -1))); });
             // If we reach this point, there's nothing left to check from here.
             return false;
         }
 
         // Kickstart the whole process by checking "start".
-        checkCave("start", []);
 
         switch (mode) {
             case 1:
+                checkCave("start", [], false);
                 //validPaths.forEach(path => { appOut.value += `${path.join(',')}\n`; });
                 appOut.value += `Output: ${validPaths.length}\n`;
                 break;
             case 2:
-                appOut.value += `This is phase 2's output.\n`;
+                checkCave("start", [], true);
+                //validPaths.forEach(path => { appOut.value += `${path.join(',')}\n`; });
+                appOut.value += `Output: ${validPaths.length}\n`;
                 break;
         }
     }
