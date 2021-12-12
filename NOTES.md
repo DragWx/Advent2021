@@ -106,3 +106,19 @@ Another puzzle where it's helpful to use a `stack`! Iterate over your grid of oc
 Part 2 is as straightforward as running until every single octopus in the grid is marked `flashed` at the end of the step.
 
 You know, repeatedly popping a self-refilling stack until it's empty is a lot like the `floodfill` algorithm I used in puzzle 9-2. This is the third day in a row requiring stacks, I wonder how much more complicated things will get? Especially when day 5 was the one that was *my* most complicated one. :P
+
+# Day 12
+This is a `graph traversal` puzzle, and my solution involves a recursive `depth-first search` where the search doesn't terminate until we run out of valid nodes to check.
+
+Normally, when you traverse a graph, you need to keep track of which nodes you've already visited, but we also need some way of *rewinding* that information when we backtrack to check the other branches. This is why I went with a recursive function even though I normally don't like those.
+
+An immutable snapshot of the current "state" is passed to each recursive call:
+- The current path from `start` to here
+   - Allows us to print the path without needing to trace back to `start`
+   - Contains all of the visited nodes so far
+- Whether we're still allowed to revisit "small cave" nodes or not
+- Create a new, "updated" snapshot to pass to the next recursive call
+
+Because each call contains its own snapshot of the state, we get the "rewinding" property we want when the DFS backtracks to traverse the next branch.
+
+My solution for phase 2 is, so far, the only one that noticably takes a second or two to complete. All of my other solutions so far are instant on my machine. I wonder if there's a way to improve this?
