@@ -124,3 +124,12 @@ Because each call contains its own snapshot of the state, we get the "rewinding"
 For this one, it actually took me an hour just to come up with a way to solve the puzzle at all, but once I figured it out, it was 30 minutes of code-writing to implement, and then another 30 minutes for phase 2. This was the first one I needed to write on a notepad to figure out. :P
 
 My solution for phase 2 is, so far, the only one that noticably takes a second or two to complete. All of my other solutions so far are instant on my machine. I wonder if there's a way to improve this?
+
+# Day 13
+When you think about it, a fold is kinda like a horizontal or vertical flip that only affects the dots on half the canvas, so that's how I handled this one.
+
+For a fold across an `X` position, pretend you want to horizontally flip a rectangular region with a width of `(X * 2)`, except you only modify the dots whose `X` coordinate is greater than the flip position. The `width` of the canvas then shrinks to the `X` position the fold happened at.
+
+You do the same thing for vertical folds, but with `Y` instead of `X`.
+
+I only kept track of dot coordinates, I didn't plot anything until phase 2 required a printout. Like day 5, coordinates were serialized into a single 48-bit integer each: `(X | (Y << 24))`. When you sort this, it sorts the coordinates into raster order, which is convenient when you plot by sequential printing.
