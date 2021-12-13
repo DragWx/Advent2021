@@ -92,7 +92,45 @@ namespace day13 {
                 appOut.value += `Output: ${dots.length}\n`;
                 break;
             case 2:
-                appOut.value += `This is phase 2's output.\n`;
+                folds.forEach(x => {
+                    dots = fold(dots, x.vertical, x.position);
+                    if (x.vertical) {
+                        width = x.position;
+                    } else {
+                        height = x.position;
+                    }
+                });
+                // Because of how the key is generated, this sorts the dots
+                // into reverse raster order.
+                dots.sort((a, b) => b - a);
+                var currX = 0;
+                var currY = 0;
+                while (dots.length > 0) {
+                    var dot = getCoords(dots.pop());
+                    while (currY < dot.y) {
+                        // Complete the current line.
+                        while (currX < width) {
+                            appOut.value += ".";
+                            currX++;
+                        }
+                        // Move to next line
+                        appOut.value += "\n";
+                        currX = 0;
+                        currY++;
+                    }
+                    // Move to current position of dot.
+                    while (currX < dot.x) {
+                        appOut.value += ".";
+                        currX++;
+                    }
+                    // Print dot.
+                    appOut.value += "#";
+                    currX++;
+                }
+                appOut.value += "\n";
+
+                //appOut.value += `Size: ${width} x ${height}\n`;
+                //appOut.value += `Output: ${dots.length}\n`;
                 break;
         }
     }
