@@ -133,3 +133,18 @@ For a fold across an `X` position, pretend you want to horizontally flip a recta
 You do the same thing for vertical folds, but with `Y` instead of `X`.
 
 I only kept track of dot coordinates, I didn't plot anything until phase 2 required a printout. Like day 5, coordinates were serialized into a single 48-bit integer each: `(X | (Y << 24))`. When you sort this, it sorts the coordinates into raster order, which is convenient when you plot by sequential printing.
+
+# Day 14
+Phase 1 is easy, if you only need 10 iterations, you can just scan your input string again and again, evolving it each time, until you've done it 10 times, and you'll get your result in less than a second.
+
+Phase 2 is a doozy, because the puzzle asks for 40 iterations. Well, a string of 2 characters will become a string of about **1,099,511,627,777** characters (if I did my math right), so phase 1's solution is immediately out.
+
+If you approach phase 2 with a divide-and-conquer algorithm (i.e, recursion), you can calculate the character counts without needing to calculate a string in the interim.
+
+There's another neat trick, too: imagine you're at recursion depth 10. A pair of characters becomes `1024` characters to look at. If you get the pair `'XY'`, you can be assured that there will be several `'XY'` pairs appearing within these 1024 characters. Once we've computed the character counts for the pair `'XY'` at depth `10`, if we can just save those counts, we can call them back up later, whenever we're at depth `10` and find another `'XY'`, letting us skip the recursion for this pair.
+
+That's right, caching. The solution I came up with sets up several recursion depths as "checkpoints" where we cache the results. I started with `(total iterations) / 2`, but wound up with `(total iterations) * 0.67`, where each checkpoint creates an additional checkpoint at `(current depth) * 0.67`.
+
+It probably could be simpler, like setting a checkpoint every 10 levels, but this was the first thing that ended up working, so I stopped there. It still takes a second to actually get the answer back, but that's much better than having to wait overnight.
+
+This really surprised me, because I was totally stumped until I started thinking about stuff like "is there some kind of *compression* I can do to remove the redundancy in the string?"
