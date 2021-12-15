@@ -63,7 +63,7 @@ namespace day15 {
         var cxt = outCanvas.getContext("2d");
         var drawScale = 4;
         if (mode == 2) {
-            drawScale = 2;
+            drawScale = 1;
         }
         outCanvas.height = height * drawScale;
         outCanvas.width = width * drawScale;
@@ -140,14 +140,22 @@ namespace day15 {
         var path = [goalKey];
         var pathIterator = goalKey;
         var score = 0;
-        cxt.fillStyle = "#F00";
+        cxt.strokeStyle = "#F00";
+        cxt.lineWidth = drawScale / 2;
+        if (mode == 2) {
+            cxt.lineWidth = drawScale;
+        }
+        cxt.moveTo(0,0);
+        cxt.beginPath();
         while (pathIterator) {
             path.push(pathIterator);
             var coords = getCoords(pathIterator);
             score += getTerrain(coords.x, coords.y);
-            cxt.fillRect(coords.x * drawScale, coords.y * drawScale, drawScale / 2, drawScale / 2);
+            //cxt.fillRect(coords.x * drawScale, coords.y * drawScale, drawScale / 2, drawScale / 2);
+            cxt.lineTo((coords.x * drawScale) + (drawScale/2), (coords.y * drawScale) + (drawScale/2));
             pathIterator = cameFrom.get(pathIterator);
         }
+        cxt.stroke();
         appOut.value += `Output: ${score}\n`;
     }
 };
