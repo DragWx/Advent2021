@@ -150,3 +150,10 @@ It probably could be simpler, like setting a checkpoint every 10 levels, but thi
 This really surprised me, because I was totally stumped until I started thinking about stuff like "is there some kind of *compression* I can do to remove the redundancy in the string?"
 
 UPDATE: After looking at the solutions others came up with, the better solution doesn't involve recursion at all! Start by scanning the input and counting how many times each unique pair appears. That's becomes your *real* starting input. For the current step, scan through your array of pairs, and check against the rules to see what each pair expands into. For example, if there's two `AA`s, and `AA -> ABA`, then the next input will contain two `AB`s, and two `BA`s. Now scan again on the next input, and so on until you've reached the number of iterations you need. Finally, in the final array of unique pairs and their counts, count how many times each character appears in each pair, scaled by the pair's counter. I hate that I didn't think of this, but I'm happy I know it now, and by extension, happy I'm doing this advent. :P
+
+# Day 15
+I literally just used the A* pathfinding algorithm straight out of Wikipedia. I can't code the algorithm from memory but I knew it was the correct algorithm to try first.
+
+In university, my algorithms class went over Dijkstra's algorithm, which aims to find the smallest-costing path through a graph, where each edge between nodes has a "cost" associated with it, and A* is an improved version with a better heuristic (so you check fewer nodes), and also the algorithm you learn about when you research pathfinding algorithms for video games.
+
+A 2D grid is just like a graph with edges: when each cell has a "cost" associated with it, we can think of it the same way as the "cost" to cross an edge to enter one node from another. A grid without costs would just cost "1", like if you simply want to minimize how many nodes you need to visit, or how many cells to walk across.
