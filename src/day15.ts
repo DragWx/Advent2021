@@ -32,8 +32,21 @@ namespace day15 {
                 terrain.push(newRow);
             }
         });
-        const width = terrain[0]?.length || 0;
-        const height = terrain.length;
+        var width = terrain[0]?.length || 0;
+        var height = terrain.length;
+        var dataWidth = width;
+        var dataHeight = height;
+        if (mode == 2) {
+            width *= 5;
+            height *= 5;
+        }
+        var getTerrain = function(x: number, y: number) {
+            var output = terrain[y % dataHeight][x % dataWidth];
+            output += Math.floor(x / dataWidth) + Math.floor(y / dataHeight);
+            output = ((output - 1) % 9) + 1;
+            return output;
+
+        }
         var getKey = function(x: number, y: number) {
             return (y * width) + x;
         }
@@ -49,6 +62,9 @@ namespace day15 {
         // Draw the heightmap.
         var cxt = outCanvas.getContext("2d");
         var drawScale = 4;
+        if (mode == 2) {
+            drawScale = 2;
+        }
         outCanvas.height = height * drawScale;
         outCanvas.width = width * drawScale;
         const palette = [
@@ -63,12 +79,12 @@ namespace day15 {
             "#AAAAAA",
             "#DDDDDD"
         ];
-        terrain.forEach((currRow, y) => {
-            currRow.forEach((currCol, x) => {
-                cxt.fillStyle = palette[currCol];
+        for (var y = 0; y < height; y++) {
+            for (var x = 0; x < width; x++) {
+                cxt.fillStyle = palette[getTerrain(x, y)];
                 cxt.fillRect(x * drawScale, y * drawScale, drawScale, drawScale);
-            });
-        });
+            }
+        }
 
         var goalKey = getKey(width-1, height-1);
 
@@ -107,7 +123,7 @@ namespace day15 {
             if (currCoords.y < height-1) { neighbors.push([getKey(currCoords.x,     currCoords.y + 1), currCoords.x,     currCoords.y + 1]); }
             neighbors.forEach(currNeighbor => {
                 // Calculate travel cost from start to this neighbor node.
-                var myTravelCost = travelCost.get(curr) + terrain[currNeighbor[2]][currNeighbor[1]];
+                var myTravelCost = travelCost.get(curr) + getTerrain(currNeighbor[1], currNeighbor[2]);
                 if (myTravelCost < (travelCost.get(currNeighbor[0]) || Infinity)) {
                     // We've just found a better path to approach this coordinate from.
                     cameFrom.set(currNeighbor[0], curr);
@@ -128,19 +144,10 @@ namespace day15 {
         while (pathIterator) {
             path.push(pathIterator);
             var coords = getCoords(pathIterator);
-            score += terrain[coords.y][coords.x];
+            score += getTerrain(coords.x, coords.y);
             cxt.fillRect(coords.x * drawScale, coords.y * drawScale, drawScale / 2, drawScale / 2);
             pathIterator = cameFrom.get(pathIterator);
         }
-        cxt.stroke();
-
-        switch (mode) {
-            case 1:
-                appOut.value += `Output: ${score}\n`;
-                break;
-            case 2:
-                appOut.value += `This is phase 2's output.\n`;
-                break;
-        }
+        appOut.value += `Output: ${score}\n`;
     }
 };
