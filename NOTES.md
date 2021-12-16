@@ -157,3 +157,14 @@ I literally just used the A* pathfinding algorithm straight out of Wikipedia. I 
 In university, my algorithms class went over Dijkstra's algorithm, which aims to find the smallest-costing path through a graph, where each edge between nodes has a "cost" associated with it, and A* is an improved version with a better heuristic (so you check fewer nodes), and also the algorithm you learn about when you research pathfinding algorithms for video games.
 
 A 2D grid is just like a graph with edges: when each cell has a "cost" associated with it, we can think of it the same way as the "cost" to cross an edge to enter one node from another. A grid without costs would just cost "1", like if you simply want to minimize how many nodes you need to visit, or how many cells to walk across.
+
+# Day 16
+I deal with serial protocols and bitstreams for my dayjob, so this wasn't anything special for me. Most of the time was spent writing the logic for taking a hex stream and consuming it bit-by-bit, since you can only read 4 bits at a time, and you need to keep track of the remainder, etc.
+
+Phase 2 would've been super quick except I was incompletely decoding my number literals (Only the final digit actually got returned, rather than the full number with all the digits)! That apparently took me an hour to debug, but it shouldn't have:
+1. Phase 1 passed, so the correct amount of packets were being decoded in the correct order without errors.
+2. All of the operator tests passed. 
+3. When examining the debugging output, all the calculations went off without a hitch. (This is what took the most time)
+4. The only possible thing remaining was the decoding of number literals.
+
+Got there eventually!
