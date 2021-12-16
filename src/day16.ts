@@ -57,24 +57,35 @@ namespace day16 {
             bitBuffer = 0;
             bitBufferLen = 0;
         }
-        var getPacket = function () {
+        var getPacket = function (depth = 0) {
+            var contents: number = undefined;
             var version = getBits(3);
             p1Score += version;
             var type = getBits(3);
-            //appOut.value += `V${version} T${type}\n`;
+            /*if (type != 4) {
+                appOut.value += "\n";
+                for (var i = 0; i < depth; i++) {
+                    appOut.value += "  ";
+                }
+            }*/
+            //appOut.value += ["+[", "*[", "min[", "max[", "", ">[", "<[", "==["][type];
+            //appOut.value += `V${version} T${type} `;
             var numBits = 6;
             if (type == 4) {
                 // Number literal, digits are encoded with 5 bits.
                 // MSB is 0 on last digit, 1 on all others, and then 4 bits
                 // per digit. Finally, the stream is padded to 4-bit boundary.
                 var headerBit = 0;
+                contents = 0;
                 do {
                     headerBit = getBits(1);
-                    getBits(4); // TODO: Store this.
+                    contents = (contents * 0x10) + getBits(4);
                     numBits += 5;
                 } while (headerBit);
+                //appOut.value += `${contents} `;
             } else {
                 // Operator.
+                var subPackets = Array<number>();
                 var lengthBit = getBits(1);
                 numBits++;
                 if (lengthBit == 0) {
@@ -83,8 +94,9 @@ namespace day16 {
                     numBits += 15;
                     var bitsRead = 0;
                     while (bitsRead < bitsExpected) {
-                        var subPacket = getPacket();
+                        var subPacket = getPacket(depth + 1);
                         bitsRead += subPacket.numBits;
+                        subPackets.push(subPacket.contents);
                     }
                     numBits += bitsRead;
                 } else {
@@ -92,21 +104,50 @@ namespace day16 {
                     var numSubPackets = getBits(11);
                     numBits += 11;
                     for (var i = 0; i < numSubPackets; i++) {
-                        var subPacket = getPacket();
+                        var subPacket = getPacket(depth + 1);
                         numBits += subPacket.numBits;
+                        subPackets.push(subPacket.contents);
                     }
                 }
+                switch (type) {
+                    case 0: // Sum
+                        contents = subPackets.reduce((p, v) => p + v, 0);
+                        break;
+                    case 1: // Product
+                        contents = subPackets.reduce((p, v) => p * v, 1);
+                        break;
+                    case 2: // Minimum
+                        contents = subPackets.reduce((p, v) => (v < p) ? v : p, subPackets[0]);
+                        break;
+                    case 3: // Maximum
+                        contents = subPackets.reduce((p, v) => (v > p) ? v : p, subPackets[0]);
+                        break;
+                    case 5: // Greater than
+                        contents = (subPackets[0] > subPackets[1]) ? 1 : 0;
+                        break;
+                    case 6: // Less than
+                        contents = (subPackets[0] < subPackets[1]) ? 1 : 0;
+                        break;
+                    case 7: // Equal to
+                        contents = (subPackets[0] == subPackets[1]) ? 1 : 0;
+                        break;
+                }
+                /*appOut.value += "\n";
+                for (var i = 0; i < depth; i++) {
+                    appOut.value += "  ";
+                }
+                appOut.value += `]=${contents} `;*/
             }
-            return {version, type, numBits};
+            return {numBits, contents};
         }
-        getPacket();
+        var result = getPacket();
 
         switch (mode) {
             case 1:
                 appOut.value += `Output: ${p1Score}\n`;
                 break;
             case 2:
-                appOut.value += `This is phase 2's output.\n`;
+                appOut.value += `Output: ${result.contents}\n`;
                 break;
         }
     }
