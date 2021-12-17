@@ -168,3 +168,22 @@ Phase 2 would've been super quick except I was incompletely decoding my number l
 4. The only possible thing remaining was the decoding of number literals.
 
 Got there eventually!
+
+# Day 17
+I solved phase 1 with just math, but still coded a function to compute the triangle sum anyway.
+
+Phase 2 was the real challenge, and my comments within the program explain my thought process for how I got to my solution. Basically, I took the example, and also some graph paper, and looked for patterns.
+First, split the problem into X axis and Y axis, just like collision detection. You can take the target region and compute all velocities which will reach there in `N` steps, if you shoot **in the direction of the target**.
+
+I don't know of any fancy formulas, I just experimented until I came up with a formula which worked. The algorithm computes all velocities which will reach the target in `1` step, then in `2` steps, then `3`, and so on.
+
+An extra step for the `Y` axis is, all **upwards velocities** will go up, then come back down to exactly `Y=0`, and then will proceed down the exact same path as one of the **downwards velocities**, so for each downwards velocity you calculate, you also can calculate an upwards "complement" which does the same thing, but with a predictable delay.
+
+The result of these calculations is two lists, one for `X` and `Y`, which contain the velocities which reach the target region after `N` steps, for each value of `N`. If one velocity will **pass through the region over multiple steps**, that velocity will appear in each `N` it's inside the region.
+
+Finally, you combine these two lists on their `N` values. All combinations of X and Y velocities which are inside the target region during the same step number are valid answers, which is why the list is grouped by step number.
+
+There's an extra case for X velocities, if `velocity.X == currStepNum`, that represents a velocity where `object.X` **comes to a stop** inside the target region, which means `object.X` stays in the target region for `currStepNum` and then **all steps following**.
+- That means, when `velocity.X == currStepNum`, all valid answers are all `velocity.Y` values inside the target Y region on all step numbers `N` where `currStepNum >= N`. (a.k.a., "this step and then all steps after this")
+
+This is the second puzzle where I needed to stop and finish the next day, because it was getting too late at night. I usually try to finish these in the same night, but I'm starting to feel the effects of how much sleep I'm losing by doing that. Take care of yourselves, folks. :D
