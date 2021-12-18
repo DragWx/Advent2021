@@ -187,3 +187,10 @@ There's an extra case for X velocities, if `velocity.X == currStepNum`, that rep
 - That means, when `velocity.X == currStepNum`, all valid answers are all `velocity.Y` values inside the target Y region on all step numbers `N` where `currStepNum >= N`. (a.k.a., "this step and then all steps after this")
 
 This is the second puzzle where I needed to stop and finish the next day, because it was getting too late at night. I usually try to finish these in the same night, but I'm starting to feel the effects of how much sleep I'm losing by doing that. Take care of yourselves, folks. :D
+
+# Day 18
+This is big and complicated and I hate it. :D
+
+I just ignored the nested structure and scanned each equation as a flat array of numbers, and then a flat array of depths. I did it that way because part of the operations requires distributing values to adjacent numbers regardless of depth. As it turns out, you don't need to keep track of grouping, because only *pairs* can increase depth, so if you're looking for pairs above a depth of 4, the first index you find in your scan will *always* be the left half of a pair.
+
+Sadly, I couldn't come up with anything clever for phase 2 after staring at it for almost two hours, so I just made it look at all permutations of equations to find which one had the biggest magnitude. It worked, but it won't scale well. Sometimes, you simply have to go with what works, and then come back to optimize it later.
