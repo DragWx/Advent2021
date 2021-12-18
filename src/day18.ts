@@ -12,6 +12,71 @@ namespace day18 {
         return run;
     }
 
+    function reduce(values: Array<number>, depths: Array<number>) {
+        //var opCount = 0;
+        while (true) {
+            var explodePosition = depths.findIndex((v, i, a) => (v > 4) && (a[i + 1] == v));
+            if (explodePosition > -1) {
+                if (explodePosition > 0) {
+                    // Distribute left.
+                    values[explodePosition - 1] += values[explodePosition];
+                }
+                // Convert pair to single
+                values.splice(explodePosition, 1);
+                depths.splice(explodePosition, 1);
+                depths[explodePosition]--;
+                if (explodePosition < depths.length - 1) {
+                    // Distribute right.
+                    values[explodePosition + 1] += values[explodePosition];
+                }
+                // Set single to 0, completing the explosion.
+                values[explodePosition] = 0;
+                //opCount++;
+                //appOut.value += `- ${opCount}: Explode -\nV: ${values.join(',')}\nD: ${depths.join(',')}\n`;
+                continue;
+            }
+
+            var splitPosition = values.findIndex(x => x >= 10);
+            if (splitPosition > -1) {
+                // Insert new element to right.
+                values.splice(splitPosition + 1, 0, Math.ceil(values[splitPosition] / 2));
+                values[splitPosition] = Math.floor(values[splitPosition] / 2);
+                // Promote to pair.
+                depths.splice(splitPosition + 1, 0, depths[splitPosition] + 1);
+                depths[splitPosition]++;
+                //opCount++;
+                //appOut.value += `- ${opCount}: Split -\nV: ${values.join(',')}\nD: ${depths.join(',')}\n`;
+                continue;
+            }
+            break;
+        }
+        //appOut.value += `- Finished -\nV: ${values.join(',')}\nD: ${depths.join(',')}\n`;
+    }
+    function add(leftValues: Array<number>, leftDepth: Array<number>, rightValues: Array<number>, rightDepth: Array<number>) {
+        var outValues = leftValues.concat(rightValues);
+        var outDepth: Array<number>;
+        if (leftDepth.length == 0) {
+            outDepth = rightDepth;
+        } else {
+            outDepth = leftDepth.map(x => x + 1).concat(rightDepth.map(x => x + 1));
+        }
+        return {values: outValues, depth: outDepth};
+    }
+    function toMagnitude(values: Array<number>, depths: Array<number>) {
+        // This works similarly to how the explode works.
+        while (values.length > 1) {
+            // Find location of the deepest pair, left to right.
+            var deepest = depths.reduce((p, v) => (v > p) ? v : p);
+            var deepestPos = depths.findIndex((v, i, a) => (v == deepest) && (a[i + 1] == v));
+            // Calculate magnitude of pair to reduce to single.
+            var left = values.splice(deepestPos, 1)[0];            
+            values[deepestPos] = (left * 3) + (values[deepestPos] * 2);
+            // Convert to single.
+            depths.splice(deepestPos, 1);
+            depths[deepestPos]--;
+        }
+    }
+
     function run (mode: number) {
         appOut.value = `== Phase ${mode} ==\n`;
         var inValues = new Array<Array<number>>();
@@ -48,84 +113,53 @@ namespace day18 {
             inDepths.push(currDepths);
             //appOut.value += `${inTxt}\nV: ${currValues.join(',')}\nD: ${currDepths.join(',')}\n`;
         });
-        // Each additional line takes the previous info and promotes it to the
-        // left half of a pair, with the new line as the right half.
-
-        var currValues = new Array<number>();
-        var currDepths = new Array<number>();
-
-        inValues.forEach((nextValues, index) => {
-            currValues = currValues.concat(nextValues);
-            if (currDepths.length == 0) {
-                currDepths = inDepths[index];
-            } else {
-                currDepths = currDepths.map(x => x + 1).concat(inDepths[index].map(x => x + 1));
-            }
-
-            //appOut.value += `- Add -\nV: ${currValues.join(',')}\nD: ${currDepths.join(',')}\n`;
-
-            //var opCount = 0;
-            while (true) {
-                var explodePosition = currDepths.findIndex((v, i, a) => (v > 4) && (a[i + 1] == v));
-                if (explodePosition > -1) {
-                    if (explodePosition > 0) {
-                        // Distribute left.
-                        currValues[explodePosition - 1] += currValues[explodePosition];
-                    }
-                    // Convert pair to single
-                    currValues.splice(explodePosition, 1);
-                    currDepths.splice(explodePosition, 1);
-                    currDepths[explodePosition]--;
-                    if (explodePosition < currDepths.length - 1) {
-                        // Distribute right.
-                        currValues[explodePosition + 1] += currValues[explodePosition];
-                    }
-                    // Set single to 0, completing the explosion.
-                    currValues[explodePosition] = 0;
-                    //opCount++;
-                    //appOut.value += `- ${opCount}: Explode -\nV: ${currValues.join(',')}\nD: ${currDepths.join(',')}\n`;
-                    continue;
-                }
-
-                var splitPosition = currValues.findIndex(x => x >= 10);
-                if (splitPosition > -1) {
-                    // Insert new element to right.
-                    currValues.splice(splitPosition + 1, 0, Math.ceil(currValues[splitPosition] / 2));
-                    currValues[splitPosition] = Math.floor(currValues[splitPosition] / 2);
-                    // Promote to pair.
-                    currDepths.splice(splitPosition + 1, 0, currDepths[splitPosition] + 1);
-                    currDepths[splitPosition]++;
-                    //opCount++;
-                    //appOut.value += `- ${opCount}: Split -\nV: ${currValues.join(',')}\nD: ${currDepths.join(',')}\n`;
-                    continue;
-                }
-                break;
-            }
-            //appOut.value += `- Finished -\nV: ${currValues.join(',')}\nD: ${currDepths.join(',')}\n`;
-        });
-
-        // Sum and reduction are all done. Now calculate the magnitude. We'll do
-        // this similarly to how the explode works.
-        while (currValues.length > 1) {
-            // Find location of the deepest pair, left to right.
-            var deepest = currDepths.reduce((p, v) => (v > p) ? v : p);
-            var deepestPos = currDepths.findIndex((v, i, a) => (v == deepest) && (a[i + 1] == v));
-            // Calculate magnitude of pair to reduce to single.
-            var left = currValues.splice(deepestPos, 1)[0];            
-            currValues[deepestPos] = (left * 3) + (currValues[deepestPos] * 2);
-            // Convert to single.
-            currDepths.splice(deepestPos, 1);
-            currDepths[deepestPos]--;
-        }
-
-        //appOut.value += `- Finished -\nV: ${currValues.join(',')}\nD: ${currDepths.join(',')}\n`;
 
         switch (mode) {
             case 1:
+                // Each additional line takes the previous info and promotes it to the
+                // left half of a pair, with the new line as the right half.
+
+                var currValues = new Array<number>();
+                var currDepths = new Array<number>();
+
+                inValues.forEach((nextValues, index) => {
+                    var addResults = add(currValues, currDepths, nextValues, inDepths[index]);
+                    currValues = addResults.values;
+                    currDepths = addResults.depth;
+
+                    //appOut.value += `- Add -\nV: ${currValues.join(',')}\nD: ${currDepths.join(',')}\n`;
+                    reduce(currValues, currDepths);
+                });
+
+                // Sum and reduction are all done. Now calculate the magnitude.
+                toMagnitude(currValues, currDepths);
+
+                //appOut.value += `- Finished -\nV: ${currValues.join(',')}\nD: ${currDepths.join(',')}\n`;
                 appOut.value += `Output: ${currValues[0]}\n`;
                 break;
             case 2:
-                appOut.value += `This is phase 2's output.\n`;
+                // Figure out the largest magnitude you can get from adding two
+                // lines together.
+
+                // I spent hours trying to think of a clever way to not check all
+                // permutations, but I came up empty.
+                var magnitudes = Array<number>();
+                for (var a = 0; a < inValues.length; a++) {
+                    for (var b = 0; b < inValues.length; b++) {
+                        if (a == b) {
+                            continue;
+                        } else {
+                            var addResults = add(inValues[a], inDepths[a], inValues[b], inDepths[b]);
+                            reduce(addResults.values, addResults.depth);
+                            toMagnitude(addResults.values, addResults.depth);
+                            magnitudes.push(addResults.values[0]);
+                        }
+                    }
+                }
+                magnitudes = magnitudes.sort((a, b) => b - a);
+                var output = magnitudes[0];
+
+                appOut.value += `Output: ${output}\n`;
                 break;
         }
     }
