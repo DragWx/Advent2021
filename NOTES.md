@@ -194,3 +194,40 @@ This is big and complicated and I hate it. :D
 I just ignored the nested structure and scanned each equation as a flat array of numbers, and then a flat array of depths. I did it that way because part of the operations requires distributing values to adjacent numbers regardless of depth. As it turns out, you don't need to keep track of grouping, because only *pairs* can increase depth, so if you're looking for pairs above a depth of 4, the first index you find in your scan will *always* be the left half of a pair.
 
 Sadly, I couldn't come up with anything clever for phase 2 after staring at it for almost two hours, so I just made it look at all permutations of equations to find which one had the biggest magnitude. It worked, but it won't scale well. Sometimes, you simply have to go with what works, and then come back to optimize it later.
+
+# Day 19
+This was the first one where I couldn't finish phase 1 in the same night, and I finally finished phase 2 about 2.5 hours into day 20 having been released, which I'm definitely not starting tonight.
+
+Anyway, I didn't know where to start with this, but I did know I needed to compare two points while ignoring signs and coordinate ordering, and the idea for what to do stemmed from that.
+
+Take two lists of points, `listA` and `listB`. Select two coordinates, `A` and `B` and subtract their values from `listA` and `listB` respectively, then check how many points match between the two lists. If `A` and `B` turned out to be the same `beacon`, then all of the other beacons common between the two lists will show up as matches. I looked for the pair of points which generated the largest list of matches and went with that.
+
+This list of results is just *our best guess* of which points *might* match, there's still more work to do.
+
+The function for checking if two points have the same coordinates does so by looking to see if each *value* in `A` exists somewhere in `B`. The return isn't just `true` or `false`, but the *order the coordinates matched in*, substituting a `-1` for coordinates which were duplicates (e.g., (1, 1, 5), (4, 8, 4)), and returning `null` if the points don't match at all.
+
+Go through the matches and figure out which coordinate order appeared the most often. The `-1`s were just so points with duplicate coordinates could still contribute the position of the non-duplicate coordinate. Unless the data is very ambiguous, this should arrive at the coordinate order you need to use to translate `B` into `A`.
+
+With an updated version of `listA` and `listB` with the same origin (the `beacon` which appeared in both lists and created our list of matches, since that so far is the only thing we know is **definitely** a match), and the same coordinate ordering (which comes from the previous step), go through the list of matches again.
+
+Since they have the same coordinate ordering and the same origins, the coordinates for each matching beacon should be the same, *except for signs*. Figure out, between `A` and `B`, which coordinates seem to always have flipped signs, and which don't. This will tell you how to fix the signs in `listB`. Remember that `0` doesn't have any sign, so ignore those.
+
+When you fix the signs in `listB`, it will now represent the same coordinate space as `listA`, so now is the time to repeat the scan to see which points match in both lists, and this time, the results are accurate and won't potentially contain false positives like the first scan.
+
+My original implementation of the coordinate checker was actually *really slow* with large sets of data, and I had to use FireFox's profiler to figure this out and why; the garbage collector was going crazy. I left the original in there, commented out, next to the more efficient implementation. Long story short, don't use the `sort`, `filter`, etc functions of `arrays` in very hot code.
+
+Phase 2 was another lengthy challenge, like phase 1.
+
+For each `scanner`, take a known common `beacon` between them, and figure out the difference between their coordinates. This will give you the position of one scanner, relative to the other.
+
+Let's say you have three scanners, `1` and `2` overlap, `2` and `3` overlap, but `1` and `3` *do not* overlap. To figure out the position of `3` relative to `1`, you have to use `2`.
+
+Hopefully you saved the translations you figured out in phase 1 in order to convert between each list's coordinate space, because you'll need them for this. Take the position of `3` from `2`, which should be in `2`'s coordinate space. Then convert this to `1`'s coordinate space, and add to it the position of `2` from `1`.
+
+It's necessary to have a way to figure out a `path` from a start scanner to a target scanner, because once you get that path, you walk from the target to the start, adding positions and converting between coordinate spaces each time.
+
+With all the blanks filled in, it's a matter of actually taking the manhattan distances between every combination of points from the one `scanner` we picked to be the `origin`, and picking the biggest distance.
+
+I'm sure there's a clever mathy way to figure it out quickly, but I think this marathon has gone far enough for today.
+
+Definitely the hardest day so far, but day 5 isn't far behind.
