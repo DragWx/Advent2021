@@ -290,6 +290,9 @@ namespace day19 {
                 scanner[scanner.length - 1].push(coords);
             }
         });
+        if (scanner[scanner.length - 1].length == 0) {
+            scanner.pop();
+        }
 
         // Each sensor has its own orientation and offset, so the coordinate
         // data is essentially randomized as to which axis is which, positive
@@ -305,7 +308,11 @@ namespace day19 {
         // `current` is where you are now, `next` is where you go next, and will
         // be `null` when you've encountered the first time the beacon was
         // discovered.
-        var aliases = new Map<number, number>()
+        var aliases = new Map<number, number>();
+        // getKey(ToHere, FromHere)
+        var scannerPositions = new Map<number, Array<number>>();
+        // getKey(Source, Destination) --> Convert source coordinates to destination coordinate systems
+        var scannerTranslations = new Map<number, {bOrder: Array<number>, signs: Array<number>}>();
         
         for (let scannerIndexA = 0; scannerIndexA < scanner.length; scannerIndexA++) {
             let beaconsA = scanner[scannerIndexA];
@@ -313,6 +320,33 @@ namespace day19 {
                 //appOut.value += `${scannerIndexA},${scannerIndexB}\n`;
                 let beaconsB = scanner[scannerIndexB];
                 let results = findBeacons(beaconsA, beaconsB);
+                
+                if (results) {
+                    // Try to calculate `B`'s position based on `A`.
+                    let BfromAKey = getKey(scannerIndexB, scannerIndexA);
+
+                    let offsetA = beaconsA[results.matches[0].indexA];
+                    let offsetB = beaconsB[results.matches[0].indexB].map((v,i,a) => a[results.bOrder[i]] * results.signs[i]);
+
+                    let BfromA = offsetB.map((x,i) => offsetA[i] - x);
+                    scannerPositions.set(BfromAKey, BfromA);
+                    scannerTranslations.set(BfromAKey, {bOrder: results.bOrder, signs: results.signs});
+
+                    // Now `A` based on `B`.
+                    let AfromBKey = getKey(scannerIndexA, scannerIndexB);
+
+                    let reverseOrder = results.bOrder.map((x,i,a) => a.indexOf(i));
+                    /*offsetB = beaconsB[results.matches[0].indexB];
+                    offsetA = beaconsA[results.matches[0].indexA].map((v,i,a) => a[reverseOrder[i]] * results.signs[reverseOrder[i]]);
+                    
+                    let AfromB = offsetA.map((x,i) => offsetB[i] - x);*/
+                    
+                    // Just take distance from A to B and negate it, then do the translation.
+                    scannerPositions.set(AfromBKey, BfromA.map((v,i,a) => a[reverseOrder[i]] * results.signs[reverseOrder[i]] * -1));
+                    scannerTranslations.set(AfromBKey, {bOrder: reverseOrder, signs: results.signs.map((v, i, a) => a[reverseOrder[i]])});
+                }
+
+                // Fill out the aliases between the two sensors.
                 beaconsA.forEach((beaconA, beaconIndexA) => {
                     let match = results?.matches.find(match => match.indexA == beaconIndexA);
                     let currKeyA = getKey(beaconIndexA, scannerIndexA);
@@ -343,22 +377,127 @@ namespace day19 {
                 aliases.set(currKeyA, null);
             }
         });
-        
 
+        // Use a BFS to fill in the rest of the sensor positions and translations.
+        let unknowns = new Array<{start: number, target: number, attempts: number}>();
+        for (let startScanner = 0; startScanner < scanner.length; startScanner++) {
+            for (let targetScanner = startScanner+1; targetScanner < scanner.length; targetScanner++) {
+                if (!scannerPositions.has(getKey(targetScanner, startScanner))) {
+                    // We don't have the position of `targetScanner` from scanner `startScanner`.
+                    unknowns.push({start: startScanner, target: targetScanner, attempts: 0});
+                }
+            }
+        }
+        let lastAttempts = 0;
+        while (unknowns.length) {
+            let currUnknown = unknowns.shift();
+            if (currUnknown.attempts != lastAttempts) {
+                // This was so I could put a breakpoint here.
+                lastAttempts = currUnknown.attempts;
+                if (lastAttempts >= 20) {
+                    // Failsafe...
+                    break;
+                }
+            }
+
+            let startScanner = currUnknown.start;
+            let targetScanner = currUnknown.target;
+            let nextPath = new Array<Array<number>>();
+            let resultPath: Array<number>;
+            // Start at the start scanner.
+            nextPath.push([startScanner]);
+            while (nextPath.length) {
+                // Get next scanner.
+                let currPath = nextPath.shift();
+                let currScanner = currPath[currPath.length-1];
+                if (currScanner == targetScanner) {
+                    // We found a path that reaches the start scanner.
+                    resultPath = currPath;
+                    break;
+                }
+                // Push all scanners you can reach from this scanner.
+                for (let i = 0; i < scanner.length; i++) {
+                    if (scannerPositions.has(getKey(i, currScanner)) && (currPath.indexOf(i) == -1)) {
+                        nextPath.push([...currPath, i]);
+                    }
+                }
+            }
+            if (resultPath) {
+                let currPos = new Array<number>(scanner[0][0].length).fill(0);
+                let currSigns = new Array<number>(currPos.length).fill(1);
+                let currOrder = new Array<number>(currPos.length).fill(0);
+                currOrder.forEach((x,i) => currOrder[i] = i);
+                while (resultPath.length) {
+                    let currScanner = resultPath.pop();
+                    let prevScanner = resultPath[resultPath.length-1];
+                    if (prevScanner === undefined) {
+                        let BfromAKey = getKey(targetScanner, currScanner);
+                        scannerPositions.set(BfromAKey, currPos);
+                        scannerTranslations.set(BfromAKey, {bOrder: currOrder, signs: currSigns});
+
+                        let AfromBKey = getKey(currScanner, targetScanner);
+                        let reverseOrder = currOrder.map((x,i,a) => a.indexOf(i));
+                        scannerPositions.set(AfromBKey, currPos.map((v,i,a) => a[reverseOrder[i]] * currSigns[reverseOrder[i]] * -1));
+                        scannerTranslations.set(AfromBKey, {bOrder: reverseOrder, signs: currSigns.map((v, i, a) => a[reverseOrder[i]])});
+                        //appOut.value += `Calculated: Order:${currOrder.join(',')} Signs:${currSigns.join(',')}\n`;
+                        break;
+                    }
+                    let currDistance = scannerPositions.get(getKey(currScanner, prevScanner));
+                    let currTranslation = scannerTranslations.get(getKey(currScanner, prevScanner));
+                    currPos = currDistance.map((x,i,a) => (currPos[currTranslation.bOrder[i]] * currTranslation.signs[i]) + a[i]);
+        
+                    currOrder = currOrder.map((x,i,a) => a[currTranslation.bOrder[i]]);
+                    currSigns = currSigns.map((x,i,a) => a[currTranslation.bOrder[i]] * currTranslation.signs[i]);
+                }
+            } else {
+                currUnknown.attempts++;
+                unknowns.push(currUnknown);
+            }
+        }
+
+
+        //let compareTranslation = scannerTranslations.get(getKey(4, 0));
+        //appOut.value += `Check: Order:${compareTranslation.bOrder.join(',')} Signs:${compareTranslation.signs.join(',')}\n`;
+        
         /*[...aliases.entries()].sort((a,b) => a[0] - b[0]).forEach(x => {
             var a = fromKey(x[0]);
             var b = (x[1] !== null) ? fromKey(x[1]) : null;
             appOut.value += `S:${a.y} B:${a.x} -> ${(b !== null) ? ("S:" + b.y + " B:" + b.x) : '-'}\n`;
         });*/
 
+        /*[...scannerPositions.entries()].sort((a,b) => a[0] - b[0]).filter(x => fromKey(x[0]).y == 0).forEach(x => {
+            let scannerNums = fromKey(x[0]);
+            appOut.value += `From ${scannerNums.y}, position of ${scannerNums.x}: ${x[1].join(',')}\n`;
+        });*/
+
+        // Phase 1
         var uniqueBeacons = [...aliases.entries()].filter(x => x[1] === null).map(x => x[0]);
+
+
+        // Phase 2
+        // I'm sure there's a better way but I just don't know enough math.
+        var positions = [...scannerPositions.entries()].filter(x => fromKey(x[0]).y == 0).map(x => x[1]);
+        positions.push(new Array<number>(scanner[0][0].length).fill(0)); // for scanner 0, which is serving as the origin.
+        var distances = new Array<number>();
+        for (var x = 0; x < positions.length; x++) {
+            for (var y = x+1; y < positions.length; y++) {
+                var result = 0;
+                for (var i = 0; i < positions[x].length; i++) {
+                    result += Math.abs(positions[x][i] - positions[y][i]);
+                }
+                distances.push(result);
+            }
+        }
+
+        //appOut.value += `${distances.join(',')}\n`;
+        var p2Output = Math.max.apply([], distances);
 
         switch (mode) {
             case 1:
                 appOut.value += `Output: ${uniqueBeacons.length} unique beacons.\n`;
                 break;
             case 2:
-                appOut.value += `This is phase 2's output.\n`;
+                appOut.value += `Output: ${p2Output}\n`;
                 break;
         }
     }
