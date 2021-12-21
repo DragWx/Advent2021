@@ -231,3 +231,12 @@ With all the blanks filled in, it's a matter of actually taking the manhattan di
 I'm sure there's a clever mathy way to figure it out quickly, but I think this marathon has gone far enough for today.
 
 Definitely the hardest day so far, but day 5 isn't far behind.
+
+# Day 20
+I tried a really fancy solution first and, like most I imagine, completely overlooked the part where the image is supposed to be (virtually) infinite, and it wasn't until I looked closely at the lookup table of the puzzle input that I saw that fully blank and fully filled regions flash back and forth with each iteration, and that includes the border.
+
+The strange thing is, I had a crazy amount of difficulty getting my offsets, edges, and other cutoffs lined up correctly, and I kept submitting wrong answers, I think maybe 8?
+
+I'm sure this is an easy puzzle, but my brain must still be fried from yesterday. I spent all day on this, and was very close to giving up and just not finishing the advent based on how much time I just put into it the past few days.
+
+That's what burnout is and why it's important to pace yourself if you're a programmer professionally; your office hours end for a good reason.
