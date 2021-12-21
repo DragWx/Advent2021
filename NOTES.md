@@ -240,3 +240,29 @@ The strange thing is, I had a crazy amount of difficulty getting my offsets, edg
 I'm sure this is an easy puzzle, but my brain must still be fried from yesterday. I spent all day on this, and was very close to giving up and just not finishing the advent based on how much time I just put into it the past few days.
 
 That's what burnout is and why it's important to pace yourself if you're a programmer professionally; your office hours end for a good reason.
+
+# Day 21
+This one was finally simple. For phase 1, note that your dice rolls always result in a movement of 6, then 5, then 4, and so on.
+
+Phase 2 was a slightly nicer version of day 12 if you can believe it. We want to find every "path" of dice rolls which leads to any player getting a score `>= 21`, but unlike day 12, the graph is a tree instead, which is *much* more predictable to scan.
+
+We can use a depth-first search again, and it's nice because:
+- We only move forwards or backwards.
+- Player position and score is modified by reversible math.
+- The math depends only on current state and current turn, no information from previous states is necessary.
+
+Probably the hardest part was figuring out how to count universes:
+- Figure out all permutations (with repetition) of making three rolls of 1, 2, or 3, then group them by *unique* sum.
+- Count how many ways you get to one sum, and that's how many universes that sum generates.
+
+So, for our search:
+- The path is made of the *summed value* rolled during each turn. 
+- When you get to a target (any player reaches the target score):
+   - Look at the current path.
+   - Convert the dice sums to the number of universes each sum generates.
+   - Multiply them all together.
+   - Add that product to the number of wins that player has so far.
+
+Now just do that until you run out of possibilities (i.e, you're finished scanning the final edge of the root node and now there's nothing left) and that's phase 2 done.
+
+This was a nice change from the cognitive overhead of the previous two days. :P
