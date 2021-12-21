@@ -266,3 +266,5 @@ So, for our search:
 Now just do that until you run out of possibilities (i.e, you're finished scanning the final edge of the root node and now there's nothing left) and that's phase 2 done.
 
 This was a nice change from the cognitive overhead of the previous two days. :P
+
+An interesting note, I didn't learn my lesson from day 19, and instead of scanning a goal path with a regular `for` loop, I used `array.map().reduce()`, which was *very slow* considering how often it needed to run. That slow implementation exists in one of the earlier commits for this day.
