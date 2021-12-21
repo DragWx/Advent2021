@@ -126,7 +126,10 @@ namespace day21 {
                     if (currPlayer.score >= 21) {
                         // If the player just won, record the win, but keep in
                         // mind how many universes have this same order of rolls.
-                        let parallelUniverses = currPath.map(x => universes[x - 3]).reduce((p, v) => p * v, 1);
+                        let parallelUniverses = 1;
+                        for (let i = 0; i < currPath.length; i++) {
+                            parallelUniverses *= universes[currPath[i] - 3];
+                        }
                         wins[currPlayerNum] += parallelUniverses;
                         // Now indicate that we go *back* from here.
                         reverse = true;
