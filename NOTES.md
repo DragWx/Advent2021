@@ -268,3 +268,21 @@ Now just do that until you run out of possibilities (i.e, you're finished scanni
 This was a nice change from the cognitive overhead of the previous two days. :P
 
 An interesting note, I didn't learn my lesson from day 19, and instead of scanning a goal path with a regular `for` loop, I used `array.map().reduce()`, which was *very slow* considering how often it needed to run. That slow implementation exists in one of the earlier commits for this day.
+
+# Day 22
+Instead of keeping track of individual cells, keep track of the *regions* of cells which are `on`. When adding a command region, perform collision detection with the existing regions. Regions which overlap the command need to be subdivided into regions which *don't* collide with the command region. Then, if the command is an `on` command, add the command region, otherwise, leave it out because the subdividing cuts it out anyway.
+
+To subdivide, consider each axis separately from the others (just like with collision detection). So for example:
+- Start with the `X` axis.
+   - If `command.left > region.left`, create a new region with the same coordinates but with an updated `X`: `region.left` to `command.left - 1`, and set the original region's `left` to `command.left`.
+   - If `command.right < region.right`, create another new region with the same coordinates but with a differently updated `X`: `command.right + 1` to `region.right`, and set the original region's `right` to `command.right`.
+- Repeat with the `Y` axis, except remember the updated `left` and `right` from the previous step.
+- Repeat with the `Z` axis, incorporating all of the updated coordinates so far.
+- Remove the original region from the list of regions.
+- If the command is an `on` command, add the `command` region to the list of regions.
+
+This has the added bonus of working with arbitrary amounts of axes. :D
+
+I knew right away to store regions and not individual cells, but needed to break out some graph paper in order to puzzle out how to do the subdivision. I originally figured it out as a 2D solution with X and Y, after guessing that the axes could be considered separately. However, when I started writing the code, I realized the subdivision could actually be simplified further, into a 1D solution. This realization came from observing what the subdivisions actually do: when even *one* axis doesn't overlap, the two objects cannot be colliding. The subdivisions change *one* axis at a time to create an entire region which doesn't overlap the command region. I also noticed that when you process X and Y, then X and Z, Y and Z is always already solved.
+
+Anyway, that was fun and easy, finally. :D
