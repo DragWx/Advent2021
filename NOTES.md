@@ -286,3 +286,15 @@ This has the added bonus of working with arbitrary amounts of axes. :D
 I knew right away to store regions and not individual cells, but needed to break out some graph paper in order to puzzle out how to do the subdivision. I originally figured it out as a 2D solution with X and Y, after guessing that the axes could be considered separately. However, when I started writing the code, I realized the subdivision could actually be simplified further, into a 1D solution. This realization came from observing what the subdivisions actually do: when even *one* axis doesn't overlap, the two objects cannot be colliding. The subdivisions change *one* axis at a time to create an entire region which doesn't overlap the command region. I also noticed that when you process X and Y, then X and Z, Y and Z is always already solved.
 
 Anyway, that was fun and easy, finally. :D
+
+# Day 23
+This was another "find all paths to the goal" problem like day 21 and 12, except going forwards and backwards is a little more complicated because there's more state to apply/undo, and especially with phase 2, you need to minimize the amount of checks you do in order for the solution to not take forever to complete.
+
+Phase 2 was a real headache because I kept running into issues where state was inconsistent, not all paths were being considered, a random `break` was messing with me, etc, so the code looks really messy due to just wanting to get an implementation up and running. However, phase 1 and 2 are identical, because the program checks the number of rows the input has.
+
+I actually stopped part-way through phase 2 to work on day 25.
+
+# Day 25
+This one is very straightforward. I used two collections of coordinates (not a 2x2 array), one for eastbound and one for southbound. For each coordinate, check the destination in both collections, and if free, add the new coordinate to the next state, otherwise, add the current coordinate to the next state.
+
+Phase 2 simply mentions that you need to have completed all 50 stars in order to actually finish the advent, and at the time, I was missing 3: 23.2, 24.1, and 24.2. After this, I went back to complete 23.2. I'm up pretty late right now on Christmas Eve, and I need to wake up somewhat early, so that'll be some self-inflicted fun. :D
