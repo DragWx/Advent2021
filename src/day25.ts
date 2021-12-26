@@ -95,7 +95,7 @@ namespace day25 {
                 appOut.value += `Output: ${steps}\n`;
                 break;
             case 2:
-                appOut.value += `This is phase 2's output.\n`;
+                appOut.value += `Merry Christmas!\n`;
                 break;
         }
     }
