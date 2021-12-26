@@ -95,25 +95,38 @@ namespace day24 {
             analysis.push(currAnalysis);
         }
         let serial = Array<number>(analysis.length);
-        for (let i = 0; i < analysis.length; i++) {
-            if (analysis[i][0] != -1) {
-                var relation = analysis[analysis[i][0]][2] + analysis[i][1];
-                appOut.value += `d${analysis[i][0]} + ${relation} == d${i}\n`;
-                if (relation > 0) {
-                    serial[i] = 9;
-                    serial[analysis[i][0]] = 9 - relation;
-                } else {
-                    serial[i] = 9 + relation;
-                    serial[analysis[i][0]] = 9;
-                }
-            }
-        }
         switch (mode) {
             case 1:
+                for (let i = 0; i < analysis.length; i++) {
+                    if (analysis[i][0] != -1) {
+                        var relation = analysis[analysis[i][0]][2] + analysis[i][1];
+                        appOut.value += `d${analysis[i][0]} + ${relation} == d${i}\n`;
+                        if (relation > 0) {
+                            serial[i] = 9;
+                            serial[analysis[i][0]] = 9 - relation;
+                        } else {
+                            serial[i] = 9 + relation;
+                            serial[analysis[i][0]] = 9;
+                        }
+                    }
+                }
                 appOut.value += `Output: ${serial.join('')}\n`;
                 break;
             case 2:
-                appOut.value += `This is phase 2's output.\n`;
+                for (let i = 0; i < analysis.length; i++) {
+                    if (analysis[i][0] != -1) {
+                        var relation = analysis[analysis[i][0]][2] + analysis[i][1];
+                        appOut.value += `d${analysis[i][0]} + ${relation} == d${i}\n`;
+                        if (relation > 0) {
+                            serial[i] = 1 + relation;
+                            serial[analysis[i][0]] = 1;
+                        } else {
+                            serial[i] = 1;
+                            serial[analysis[i][0]] = 1 - relation;
+                        }
+                    }
+                }
+                appOut.value += `Output: ${serial.join('')}\n`;
                 break;
         }
     }
