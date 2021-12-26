@@ -294,7 +294,67 @@ Phase 2 was a real headache because I kept running into issues where state was i
 
 I actually stopped part-way through phase 2 to work on day 25.
 
+# Day 24
+(This occurred after day 25, but before midnight on Christmas day.)
+My very first instinct was to try to trace through the program as though it were assembly, since that's something I'm already used to doing. Then, I got some crazy idea to try to calculate the math equation for what `Z` ends up being to see if I could go from there. I spent several hours on this before I figured the advent probably wasn't meant to have a problem *this* hard in it, so I went back to tracing through the program again, which seemed to be the correct answer.
+
+If you look at it, it's an unrolled loop, so the same collection of instructions repeat over and over, although some constants are changed around. Ultimately, `Z` is treated like a stack, where pushing and popping are done by multiplying and dividing by `26` to shift all of the elements up and down. Some of the loops `pop z` while others don't.
+
+The serial input is pushed onto the `Z` stack after a random constant is added to it. Later, this element is going to be `popped` from `Z`, and another random constant is going to be subtracted from it. This is then checked against the current serial digit to establish some kind of relationship between the two (e.g., `(d[3] + 5) == d[6]`). Depending on whether the constant is positive or negative, choose one digit to set to 9, and calculate what the other digit needs to be. Phase 2, use `1` instead of `9`.
+
+Once I figured out what the code was doing, and saw that each collection of instructions was identical other than constants, I redid my solution to automatically calculate the serial based on the reverse-engineered assembly code, and where the constants in each loop are. Much much better than the nonsense I was trying to do before! :D
+
 # Day 25
 This one is very straightforward. I used two collections of coordinates (not a 2x2 array), one for eastbound and one for southbound. For each coordinate, check the destination in both collections, and if free, add the new coordinate to the next state, otherwise, add the current coordinate to the next state.
 
 Phase 2 simply mentions that you need to have completed all 50 stars in order to actually finish the advent, and at the time, I was missing 3: 23.2, 24.1, and 24.2. After this, I went back to complete 23.2. I'm up pretty late right now on Christmas Eve, and I need to wake up somewhat early, so that'll be some self-inflicted fun. :D
+
+(Day 24 happened at this point.)
+
+Returning to Day 25, phase two was just a link to click on the puzzle page to finally complete the advent. Here is my final standing:
+```
+      --------Part 1---------   --------Part 2--------
+Day       Time    Rank  Score       Time   Rank  Score
+ 25   00:40:19    1988      0   23:21:11   6070      0
+ 24       >24h    7655      0       >24h   7533      0
+ 23       >24h   10476      0       >24h   8170      0
+ 22   23:49:27   15297      0   23:52:55   8964      0
+ 21   11:37:27   15578      0   13:12:57   9983      0
+ 20   22:22:48   15011      0   22:26:06  14659      0
+ 19   19:27:51    7783      0       >24h   8505      0
+ 18   03:48:34    3010      0   05:22:15   3814      0
+ 17   00:39:31    2716      0   15:19:13  17698      0
+ 16   02:15:55    4514      0   03:29:06   5045      0
+ 15   02:00:32    6289      0   02:25:27   4645      0
+ 14   00:56:20    7866      0   02:49:33   7462      0
+ 13   01:08:46    6985      0   01:35:57   7337      0
+ 12   01:34:28    6522      0   01:58:01   5881      0
+ 11   00:41:00    3783      0   00:47:16   3890      0
+ 10   00:23:43    5255      0   00:35:33   4508      0
+  9   01:27:57   11751      0   01:59:22   8481      0
+  8   00:18:33    5262      0   02:36:55   7769      0
+  7   00:14:41    6452      0   01:00:05  11068      0
+  6   00:26:12    7827      0   00:46:54   5608      0
+  5   01:58:12   10548      0   22:39:04  47551      0
+  4   01:35:07    8514      0   01:58:22   8232      0
+  3   00:25:46    8852      0   01:18:56   8565      0
+  2   15:18:23   87653      0   15:33:12  84050      0
+  1       >24h  108324      0       >24h  97104      0
+  ```
+
+# Final thoughts
+This was fun, challenging, and frustrating at times. Some solutions came simply, others were overengineered, and I fought with TS/JS often yet discovered several important things, like how it's better to use `for (let i = 0; ...` on arrays instead of `myArray.map(x => ...` especially in tight loops, and how I probably want to use `let` instead of `var` to declare variables from now on (`let` scopes variables to the current braces like how you'd expect in languages like C/C++, `var` scopes them global to the current function, regardless of how many braces deep you are).
+
+However, doing the advent is a *commitment* similar to doing drawing prompts in October; the more you fall behind, the less you'll feel like catching back up, yet you cannot burn yourself out trying to do several puzzles in a day.
+
+I was doing this advent with a couple friends, and was getting discouraged early on when some were solving these puzzles in like 10 minutes where it was taking me 30-40. However, I've abandoned the silly competitiveness because I came up with a solution to every single puzzle, and the fact that I *could* is what reassured me.
+
+When I didn't know how to implement algorithms I don't use often (like DFS, A*, floodfill, etc), I still knew what they *were* and could find references I could use to write my implementation; I purposely limited myself to referencing pseudocode because it's important for my mind to be able to understand what's physically happening in those algorithms, rather than just blindly copy/pasting.
+
+Also, future me needs to configure TSC to target something newer than `es6` next time, because I was missing lots of convenient functions that showed up on MDN but TSC wouldn't let me use. :P
+
+I like how, in the readme, I went "if I get bored I'll make things more festive", and then after day 3 I completely stopped. :P Basically, I didn't get bored.
+
+Anyway, I'm rambling at this point. This was fun and I'm glad I did it, I learned some stuff, and got to the end, and that's pretty cool. See you again sometime!
+
+~DragWx
